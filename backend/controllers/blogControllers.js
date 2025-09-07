@@ -1,17 +1,19 @@
 import fs from "fs";
-import imagekit from "../configs/imageKit";
+import imagekit from "../configs/imageKit.js";
 import BlogModel from "../models/Blog.js";
 
 export const addBlog = async (req, res) => {
   try {
-    const { title, subTitle, description, category, isPublished } = JSON.parse(
+    const { title, subTitle, description, category, author } = JSON.parse(
       req.body.blog
     );
 
     const imageFile = req.file;
 
-    if (!title || !description || !category || !imageFile) {
-      return res.json({ success: false, message: "Missing required fields" });
+    if (!title || !description || !category || !imageFile || author) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields" });
     }
 
     const fileBuffer = fs.readFileSync(imageFile.path);
@@ -41,11 +43,11 @@ export const addBlog = async (req, res) => {
       description,
       category,
       image,
-      isPublished,
+      author,
     });
 
-    res.json({ success: true, message: "Blog added successfully" });
+    res.status(200).json({ success: true, message: "Blog added successfully" });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(400).json({ success: false, message: error.message });
   }
 };

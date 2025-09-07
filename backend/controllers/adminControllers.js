@@ -8,12 +8,14 @@ export const adminLogin = async (req, res) => {
       email !== process.env.ADMIN_EMAIL ||
       password !== process.env.ADMIN_PASSWORD
     ) {
-      return res.json({ success: false, message: "Invalid Credentials" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid Credentials" });
     }
 
     const token = jwt.sign({ email }, process.env.JWT_SECRET);
-    res.json({ seccess: true, token });
+    res.status(201).json({ seccess: true, token });
   } catch (error) {
-    res.json({ success: false, message: error.message });
+    res.status(401).json({ success: false, message: error.message });
   }
 };
