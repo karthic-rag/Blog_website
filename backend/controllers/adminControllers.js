@@ -1,21 +1,9 @@
-import jwt from "jsonwebtoken";
-
-export const adminLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    if (
-      email !== process.env.ADMIN_EMAIL ||
-      password !== process.env.ADMIN_PASSWORD
-    ) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Invalid Credentials" });
-    }
-
-    const token = jwt.sign({ email }, process.env.JWT_SECRET);
-    res.status(201).json({ seccess: true, token });
-  } catch (error) {
-    res.status(401).json({ success: false, message: error.message });
+export const isAdmin = async (req, res) => {
+  if (req.user.role !== "admin") {
+    return res
+      .status(403)
+      .json({ success: false, message: "access denied, admin only" });
   }
+
+  next();
 };

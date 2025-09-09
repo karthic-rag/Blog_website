@@ -1,7 +1,9 @@
-import jwt from "jsonwebtoken";
 import UserModel from "../models/UserModel.js";
 import bcrypt from "bcryptjs";
+import { generateToken } from "../utils/tokenGeneration.js";
+import setCookie from "../utils/setCookie.js";
 
+// User Registration
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
@@ -35,10 +37,16 @@ export const registerUser = async (req, res) => {
     const existingUsername = await UserModel.findOne({ username: username });
     const existingEmail = await UserModel.findOne({ email: email });
 
-    if (existingEmail || existingUsername) {
+    if (existingUsername) {
       return res.status(400).json({
         success: false,
-        message: "username or email existing already",
+        message: "username existing already",
+      });
+    }
+    if (existingEmail) {
+      return res.status(400).json({
+        success: false,
+        message: "email existing already",
       });
     }
 
@@ -52,27 +60,34 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "3d" }
-    );
+    const token = generateToken(user._id, user.email);
+    setCookie(res, "token", token);
 
-    res
+    return res
       .status(201)
-      .json({ success: true, message: "User created successfully", token });
+      .json({ success: true, message: "User created successfully" });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    return res
+      .status(500)
+      .json({ success: false, message: "user not created." + error.message });
   }
 };
 
+// User Login
 export const loginUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { identifier, password } = req.body;
 
-    const userExsist = await UserModel.find({
-      $or: [{ username: username }, { email: email }],
+    if (!identifier || !password) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing Fields" });
+    }
+
+    const userExsist = await UserModel.findOne({
+      $or: [{ username: identifier }, { email: identifier }],
     });
+
     if (!userExsist) {
       return res
         .status(400)
@@ -86,18 +101,31 @@ export const loginUser = async (req, res) => {
         .json({ success: false, message: "Incorrect password" });
     }
 
-    const token = jwt.sign(
-      { id: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "3d" }
-    );
+    const token = generateToken(userExsist._id, userExsist.email);
+    setCookie(res, "token", token);
 
-    res
+    return res
       .status(200)
-      .json({ success: true, message: "User logged successfully", token });
+      .json({ success: true, message: "User logged successfully" });
   } catch (error) {
-    res
-      .status(400)
-      .json({ success: true, message: "User login unsuccessfull" });
+    return res.status(500).json({
+      success: false,
+      message: "User login unsuccessfull." + error.message,
+    });
+  }
+};
+
+// User Logout
+export const logOutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    return res
+      .status(200)
+      .json({ success: true, message: "User logged out successfully" });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "User not logged out." + error.message,
+    });
   }
 };
