@@ -3,8 +3,10 @@ import {
   loginUser,
   logOutUser,
   registerUser,
-} from "../controllers/authControllers.js";
+  updateProfile,
+} from "../controllers/userControllers.js";
 import { isLoggedIn } from "../middleware/auth.js";
+import upload from "../middleware/multer.js";
 
 const UserRouter = express.Router();
 
@@ -14,9 +16,14 @@ UserRouter.post("/register", registerUser);
 // login user
 UserRouter.post("/login", loginUser);
 
-UserRouter.post("/get", isLoggedIn);
-
 // logout user
 UserRouter.post("/logout", logOutUser);
 
+//update profile
+UserRouter.patch(
+  "/updateprofile",
+  upload.single("image"),
+  isLoggedIn,
+  updateProfile
+);
 export default UserRouter;

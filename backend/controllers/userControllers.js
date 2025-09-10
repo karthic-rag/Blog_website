@@ -2,13 +2,13 @@ import UserModel from "../models/UserModel.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/tokenGeneration.js";
 import setCookie from "../utils/setCookie.js";
+import fs from "fs";
+import imagekit from "../configs/imageKit.js";
 
 // User Registration
 export const registerUser = async (req, res) => {
   try {
     const { username, email, password } = req.body;
-
-    console.log(password.length);
 
     if (!username || !email || !password) {
       return res
@@ -126,6 +126,75 @@ export const logOutUser = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "User not logged out." + error.message,
+    });
+  }
+};
+
+//update profile
+export const updateProfile = async (req, res) => {
+  try {
+    const { name, username } = req.body;
+    const profilePic = req.file;
+
+    const updateFields = {};
+
+    // user provided a new name
+    if (name) {
+      updateFields.name = name;
+    }
+
+    //  user provided a new username
+    if (username) {
+      const existingUsername = await UserModel.findOne({ username });
+      if (
+        existingUsername &&
+        existingUsername._id.toString() !== req.user.userId
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "Username already exists",
+        });
+      }
+      updateFields.username = username;
+    }
+
+    // user uploaded a new profile picture
+    if (profilePic) {
+      const fileBuffer = fs.readFileSync(profilePic.path);
+
+      const response = await imagekit.upload({
+        file: fileBuffer,
+        fileName: profilePic.originalname,
+        folder: "/profile",
+      });
+
+      const optimizedImage = imagekit.url({
+        path: response.filePath,
+        transformation: [{ quality: "auto" }, { format: "webp" }],
+      });
+
+      updateFields.profile = optimizedImage;
+    }
+
+    // If nothing was provided
+    if (Object.keys(updateFields).length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No fields provided for update",
+      });
+    }
+    await UserModel.findByIdAndUpdate(req.user.userId, {
+      $set: updateFields,
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "User profile updated successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "User profile not updated. " + error.message,
     });
   }
 };

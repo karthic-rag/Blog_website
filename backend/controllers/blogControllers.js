@@ -4,13 +4,13 @@ import BlogModel from "../models/Blog.js";
 
 export const addBlog = async (req, res) => {
   try {
-    const { title, subTitle, description, category, author } = JSON.parse(
+    const { title, subTitle, description, category } = JSON.parse(
       req.body.blog
     );
 
     const imageFile = req.file;
 
-    if (!title || !description || !category || !imageFile || author) {
+    if (!title || !description || !category || !imageFile) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
@@ -43,7 +43,7 @@ export const addBlog = async (req, res) => {
       description,
       category,
       image,
-      author,
+      author: req.user.userId,
     });
 
     res.status(200).json({ success: true, message: "Blog added successfully" });

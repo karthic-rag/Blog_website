@@ -1,4 +1,6 @@
-export const isLoggedIn = async (req, res) => {
+import jwt from "jsonwebtoken";
+
+export const isLoggedIn = async (req, res, next) => {
   try {
     const token = req.cookies.token;
     if (!token) {
@@ -10,6 +12,8 @@ export const isLoggedIn = async (req, res) => {
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: "Not authorized, token failed" });
+    res
+      .status(401)
+      .json({ message: "Not authorized, token failed" + error.message });
   }
 };
