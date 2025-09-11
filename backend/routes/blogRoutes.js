@@ -1,13 +1,14 @@
 import express from "express";
-import { addBlog } from "../controllers/blogControllers.js";
+import { addBlog, deleteBlog } from "../controllers/blogControllers.js";
 import upload from "../middleware/multer.js";
 import { isLoggedIn } from "../middleware/auth.js";
-import { isAdmin } from "../controllers/adminControllers.js";
 
 const blogRouter = express.Router();
 
+// add new blog
 blogRouter.post("/add", upload.single("image"), isLoggedIn, addBlog);
 
-blogRouter.patch("/updateblog", isLoggedIn, isAdmin);
+// delete blog
+blogRouter.delete("/deleteblog/:blogid", isLoggedIn, deleteBlog);
 
 export default blogRouter;

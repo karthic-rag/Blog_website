@@ -4,6 +4,8 @@ import { generateToken } from "../utils/tokenGeneration.js";
 import setCookie from "../utils/setCookie.js";
 import fs from "fs";
 import imagekit from "../configs/imageKit.js";
+import BlogModel from "../models/Blog.js";
+import resourcesModel from "../models/resourceModel.js";
 
 // User Registration
 export const registerUser = async (req, res) => {
@@ -173,7 +175,7 @@ export const updateProfile = async (req, res) => {
         transformation: [{ quality: "auto" }, { format: "webp" }],
       });
 
-      updateFields.profile = optimizedImage;
+      updateFields.profile = { url: optimizedImage, id: response.fileId };
     }
 
     // If nothing was provided
@@ -195,6 +197,50 @@ export const updateProfile = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "User profile not updated. " + error.message,
+    });
+  }
+};
+
+export const getAllblogs = async (req, res) => {
+  try {
+    const allBlogs = await BlogModel.find({ status: "approved" });
+
+    if (allBlogs.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "blogs not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "all blogs get successfully", allBlogs });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "error in get all blogs" + error.message,
+    });
+  }
+};
+
+export const getAllResources = async (req, res) => {
+  try {
+    const allResources = await resourcesModel.find({ status: "approved" });
+
+    if (allResources.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "resources not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "all resources get successfully",
+      allResources,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "error in get all resources" + error.message,
     });
   }
 };

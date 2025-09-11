@@ -1,9 +1,12 @@
 import express from "express";
 import { isLoggedIn } from "../middleware/auth.js";
 import {
-  getAllblogs,
   getAllUsers,
+  getBlogByStatus,
+  getResByStatus,
   isAdmin,
+  updateBlogStatus,
+  updateResStatus,
 } from "../controllers/adminControllers.js";
 
 const adminRouter = express.Router();
@@ -11,10 +14,16 @@ const adminRouter = express.Router();
 // getting all users
 adminRouter.get("/allusers", isLoggedIn, isAdmin, getAllUsers);
 
-// getting all blogs
-adminRouter.get("/allblogs", isLoggedIn, isAdmin, getAllblogs);
+// get blogs by status
+adminRouter.get("/statusblog", isLoggedIn, isAdmin, getBlogByStatus);
 
-// getting all resources
-adminRouter.get("/allresources", isLoggedIn, isAdmin, getAllUsers);
+// get resources by status
+adminRouter.get("/statusres", isLoggedIn, isAdmin, getResByStatus);
+
+// edit blogs status
+adminRouter.patch("/editblog/:blogid", isLoggedIn, isAdmin, updateBlogStatus);
+
+// edit resources status
+adminRouter.patch("/editres/:resid", isLoggedIn, isAdmin, updateResStatus);
 
 export default adminRouter;

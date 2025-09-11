@@ -7,6 +7,10 @@ import {
 } from "../controllers/userControllers.js";
 import { isLoggedIn } from "../middleware/auth.js";
 import upload from "../middleware/multer.js";
+import {
+  getAllblogs,
+  getAllResources,
+} from "../controllers/userControllers.js";
 
 const UserRouter = express.Router();
 
@@ -26,4 +30,11 @@ UserRouter.patch(
   isLoggedIn,
   updateProfile
 );
+
+// getting all blogs
+UserRouter.get("/allblogs", getAllblogs);
+
+// getting all resources
+UserRouter.get("/allresources", getAllResources);
+
 export default UserRouter;

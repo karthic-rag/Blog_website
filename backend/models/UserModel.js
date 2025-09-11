@@ -7,8 +7,8 @@ const UserSchema = new mongoose.Schema(
       default: "blog_user",
     },
     profile: {
-      type: String,
-      default: "https://ik.imagekit.io/3vbq2c7dmz/profile/default.png",
+      type: mongoose.Schema.Types.Mixed,
+      default: { url: "https://ik.imagekit.io/3vbq2c7dmz/profile/default.png" },
     },
     username: {
       type: String,

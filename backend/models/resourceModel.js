@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const resourceSchema = new mongoose.Schema(
   {
     preview: {
-      type: String,
+      type: mongoose.Schema.Types.Mixed,
       required: true,
     },
 
@@ -27,6 +27,11 @@ const resourceSchema = new mongoose.Schema(
       type: String,
       enum: ["pending", "apporved", "rejected"],
       default: "pending",
+    },
+
+    category: {
+      type: String,
+      required: true,
     },
 
     link: {

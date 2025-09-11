@@ -1,6 +1,9 @@
 import express from "express";
 import { isLoggedIn } from "../middleware/auth.js";
-import { addResources } from "../controllers/resourcesControllers.js";
+import {
+  addResources,
+  deleteRes,
+} from "../controllers/resourcesControllers.js";
 import upload from "../middleware/multer.js";
 
 const resourcesRoutes = express.Router();
@@ -12,5 +15,8 @@ resourcesRoutes.post(
   isLoggedIn,
   addResources
 );
+
+// delete resource
+resourcesRoutes.delete("/deleteres/:resid", isLoggedIn, deleteRes);
 
 export default resourcesRoutes;
