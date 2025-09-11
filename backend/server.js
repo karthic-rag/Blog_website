@@ -6,6 +6,7 @@ import { connectDB } from "./configs/db.js";
 import adminRouter from "./routes/adminRoutes.js";
 import blogRouter from "./routes/blogRoutes.js";
 import UserRouter from "./routes/userRoutes.js";
+import resourcesRoutes from "./routes/resourcesRoutes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -22,6 +23,7 @@ app.use(cookieParser());
 app.use("/api/admin", adminRouter);
 app.use("/api/blog", blogRouter);
 app.use("/api/user", UserRouter);
+app.use("/api/resource", resourcesRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello from your Express Server!");

@@ -51,3 +51,5 @@ export const addBlog = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+
+export const updateBlog = async (req, res) => {};
