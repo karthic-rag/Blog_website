@@ -1,4 +1,5 @@
 import BlogModel from "../models/Blog.js";
+import commentModel from "../models/CommentModel.js";
 import resourcesModel from "../models/resourceModel.js";
 import UserModel from "../models/UserModel.js";
 
@@ -133,5 +134,30 @@ export const updateResStatus = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "status not updated." + error.message });
+  }
+};
+
+// get all comments
+export const getAllComments = async (req, res) => {
+  try {
+    const allComments = await commentModel.find().populate([
+      { path: "blog_id", select: "title" },
+      { path: "author", select: "name username" },
+    ]);
+
+    if (allComments.length == 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "comments not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "all comments getted", allComments });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "all comments not get." + error.message,
+    });
   }
 };

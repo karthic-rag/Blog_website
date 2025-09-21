@@ -6,16 +6,24 @@ import fs from "fs";
 import imagekit from "../configs/imageKit.js";
 import BlogModel from "../models/Blog.js";
 import resourcesModel from "../models/resourceModel.js";
+import transporter from "../middleware/Nodemailer.js";
 
 // User Registration
 export const registerUser = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const { username, email, password, confirm } = req.body;
 
-    if (!username || !email || !password) {
+    if (!username || !email || !password || !confirm) {
       return res
         .status(400)
         .json({ success: false, message: "Missing fields" });
+    }
+
+    if (password !== confirm) {
+      return res.status(400).json({
+        success: false,
+        message: "password and confirm password should be same",
+      });
     }
 
     //validate email
@@ -62,9 +70,6 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = generateToken(user._id, user.email);
-    setCookie(res, "token", token);
-
     return res
       .status(201)
       .json({ success: true, message: "User created successfully" });
@@ -86,29 +91,31 @@ export const loginUser = async (req, res) => {
         .json({ success: false, message: "Missing Fields" });
     }
 
-    const userExsist = await UserModel.findOne({
+    const user = await UserModel.findOne({
       $or: [{ username: identifier }, { email: identifier }],
     });
 
-    if (!userExsist) {
+    if (!user) {
       return res
         .status(400)
         .json({ success: false, message: "User not found" });
     }
 
-    const decodedPassword = await bcrypt.compare(password, userExsist.password);
+    const decodedPassword = await bcrypt.compare(password, user.password);
     if (!decodedPassword) {
       return res
         .status(400)
         .json({ success: false, message: "Incorrect password" });
     }
 
-    const token = generateToken(userExsist._id, userExsist.email);
+    const token = generateToken(user._id, user.email);
     setCookie(res, "token", token);
-
-    return res
-      .status(200)
-      .json({ success: true, message: "User logged successfully" });
+    const { password: _, ...userData } = user.toObject();
+    return res.status(200).json({
+      success: true,
+      message: "User logged successfully",
+      user: userData,
+    });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -120,7 +127,12 @@ export const loginUser = async (req, res) => {
 // User Logout
 export const logOutUser = async (req, res) => {
   try {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true, // safer against XSS
+      secure: process.env.NODE_ENV === "production", // only HTTPS in production
+      sameSite: "none", // CSRF protection
+      path: "/",
+    });
     return res
       .status(200)
       .json({ success: true, message: "User logged out successfully" });
@@ -128,6 +140,30 @@ export const logOutUser = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "User not logged out." + error.message,
+    });
+  }
+};
+
+// get profile
+export const getProfile = async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ _id: req.user.userId }).select(
+      "-password"
+    );
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "user get successfully", user });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "user get unsuccessfull." + error.message,
     });
   }
 };
@@ -241,6 +277,48 @@ export const getAllResources = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "error in get all resources" + error.message,
+    });
+  }
+};
+
+// contact admin
+export const contactUs = async (req, res) => {
+  try {
+    const { name, message, email } = req.body;
+
+    if (!name || !message || !email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required" });
+    }
+
+    // Mail options
+    const mailOptions = {
+      from: email,
+      to: process.env.SMTP_MAIL,
+      subject: `New Contact Us Message from ${name}`,
+      text: `
+        You have a new contact form submission:
+
+        Name: ${name}
+        Email: ${req.user.email}
+        Message: ${message}
+      `,
+    };
+
+    transporter.sendMail(mailOptions, (err, info) => {
+      if (err) {
+        console.error("Mailer error:", err);
+        return res
+          .status(500)
+          .json({ success: false, message: "Failed to send message" });
+      }
+      res.status(200).json({ success: true, message: "Message sent" });
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to send message. " + error.message,
     });
   }
 };

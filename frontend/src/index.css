@@ -1,0 +1,33 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-Inter: "Inter", "sans-serif";
+  --color-light-gray: hsl(208, 7%, 61%);
+  --color-light-white: hsl(220, 33%, 98%);
+  --color-blacker: hsl(206, 16%, 9%);
+  --color-web-blue: hsl(210, 87%, 50%);
+  --color-dark-gray: hsl(218, 27%, 17%);
+}
+
+::-webkit-scrollbar {
+  @apply hidden;
+}
+
+.active hr {
+  @apply block;
+}
+
+.anchor a {
+  @apply hover:underline;
+}
+
+@layer base {
+  h1 {
+    @apply lg:text-2xl sm:text-xl text-lg text-blacker font-bold;
+  }
+
+  h2 {
+    @apply text-lg text-white font-medium mb-2;
+  }
+}

@@ -82,11 +82,31 @@ export const deleteRes = async (req, res) => {
       .status(200)
       .json({ success: true, message: "resource deleted successfully" });
   } catch (error) {
-    return res
-      .status(500)
+    return res.status(500).json({
+      success: false,
+      message: "resource not deleted." + error.message,
+    });
+  }
+};
+
+// getting latest three resources
+export const getLatestBlog = async (req, res) => {
+  try {
+    const resources = await resourcesModel
+      .find()
+      .sort({ createdAt: -1 })
+      .limit(3);
+    res
+      .status(200)
       .json({
-        success: false,
-        message: "resource not deleted." + error.message,
+        success: true,
+        message: "resources get successfully",
+        resources,
       });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "resources get unsuccessfull." + error.message,
+    });
   }
 };
