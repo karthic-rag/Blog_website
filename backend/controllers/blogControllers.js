@@ -6,13 +6,13 @@ import commentModel from "../models/CommentModel.js";
 
 export const addBlog = async (req, res) => {
   try {
-    const { title, subTitle, description, category } = JSON.parse(
+    const { title, subtitle, description, category } = JSON.parse(
       req.body.blog
     );
 
     const imageFile = req.file;
 
-    if (!title || !description || !category || !imageFile) {
+    if (!title || !description || !category || !imageFile || !subtitle) {
       return res
         .status(400)
         .json({ success: false, message: "Missing required fields" });
@@ -41,7 +41,7 @@ export const addBlog = async (req, res) => {
 
     await BlogModel.create({
       title,
-      subTitle,
+      subtitle,
       description,
       category,
       image,
@@ -62,12 +62,10 @@ export const getLatestBlog = async (req, res) => {
       .status(200)
       .json({ success: true, message: "blogs get successfully", blogs });
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "blogs get unsuccessfull." + error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "blogs get unsuccessfull." + error.message,
+    });
   }
 };
 
@@ -109,8 +107,7 @@ export const deleteBlog = async (req, res) => {
 // add comment to the blog
 export const addComment = async (req, res) => {
   try {
-    const { blogid } = req.params;
-    const { content } = req.body;
+    const { content, blogId } = req.body;
 
     if (!content) {
       return res
@@ -120,7 +117,7 @@ export const addComment = async (req, res) => {
 
     await commentModel.create({
       content,
-      blog_id: blogid,
+      blog_id: blogId,
       author: req.user.userId,
     });
 
@@ -147,13 +144,9 @@ export const getSpecComment = async (req, res) => {
         .json({ success: false, message: "blog not found" });
     }
 
-    const comments = await commentModel.find({ blog_id: blogid });
-
-    if (comments.length == 0) {
-      return res
-        .status(400)
-        .json({ success: false, message: "comments not found for this blog" });
-    }
+    const comments = await commentModel
+      .find({ blog_id: blogid })
+      .populate("author", "profile username");
 
     return res.status(200).json({
       success: true,
@@ -187,6 +180,33 @@ export const deleteComment = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "comment not deleted." + error.message,
+    });
+  }
+};
+
+// get specific blog
+export const getSpecificBlog = async (req, res) => {
+  try {
+    const { blogId } = req.params;
+
+    const blog = await BlogModel.findOne({ _id: blogId }).populate(
+      "author",
+      "username"
+    );
+
+    if (!blog) {
+      return res
+        .status(404)
+        .json({ success: false, message: "blog not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "specific blog get successfully", blog });
+  } catch (error) {
+    return res.status(200).json({
+      success: true,
+      message: "specific blog get unsuccessfully." + error.message,
     });
   }
 };

@@ -18,11 +18,11 @@ export const isAdmin = async (req, res, next) => {
 // get all users
 export const getAllUsers = async (req, res) => {
   try {
-    const Allusers = await UserModel.find().select("-password");
+    const allUsers = await UserModel.find().select("-password");
 
     return res
       .status(200)
-      .json({ success: true, message: "all users get successfully", Allusers });
+      .json({ success: true, message: "all users get successfully", allUsers });
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -158,6 +158,30 @@ export const getAllComments = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "all comments not get." + error.message,
+    });
+  }
+};
+
+// get counts
+export const getCounts = async (req, res) => {
+  try {
+    const totalUsers = await UserModel.countDocuments();
+    const totalBlogs = await BlogModel.countDocuments({ status: "approved" });
+    const totalResources = await resourcesModel.countDocuments({
+      status: "approved",
+    });
+    res.status(200).json({
+      success: true,
+      counts: {
+        totalUsers,
+        totalBlogs,
+        totalResources,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch counts: " + error.message,
     });
   }
 };

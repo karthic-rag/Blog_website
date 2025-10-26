@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { BlogContext } from "../context/BlogContext";
 
 const CATEGORY_OPTIONS = [
   "Technology",
@@ -10,15 +11,17 @@ const CATEGORY_OPTIONS = [
 ];
 
 const CreateBlog = () => {
+  const { addBlog } = useContext(BlogContext);
   const [form, setForm] = useState({
     title: "",
     subtitle: "",
     description: "",
     category: "",
-    image: null,
   });
+  const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageError, setImageError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,30 +34,40 @@ const CreateBlog = () => {
       const validTypes = ["image/jpeg", "image/png"];
       if (!validTypes.includes(file.type)) {
         setImageError("Only JPEG and PNG images are allowed.");
-        setForm({ ...form, image: null });
+        setImage(null);
         setImagePreview(null);
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
         setImageError("Image must be less than 2MB.");
-        setForm({ ...form, image: null });
+        setImage(null);
         setImagePreview(null);
         return;
       }
       setImageError("");
-      setForm({ ...form, image: file });
+      setImage(file);
       setImagePreview(URL.createObjectURL(file));
     } else {
       setImageError("");
-      setForm({ ...form, image: null });
+      setImage(null);
       setImagePreview(null);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., send to backend)
-    console.log(form);
+    setLoading(true);
+    await addBlog(form, image);
+    setLoading(false);
+    setForm({
+      title: "",
+      subtitle: "",
+      description: "",
+      category: "",
+    });
+    setImage(null);
+    setImagePreview(null);
+    setImageError("");
   };
 
   return (
@@ -142,8 +155,9 @@ const CreateBlog = () => {
       <button
         type="submit"
         className="w-full bg-blue-700 text-white font-bold py-2 px-4 rounded hover:bg-blue-800 transition"
+        disabled={loading}
       >
-        Create Blog
+        {loading ? "Submitting..." : "Create Blog"}
       </button>
     </form>
   );

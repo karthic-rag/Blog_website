@@ -3,6 +3,7 @@ import { isLoggedIn } from "../middleware/auth.js";
 import {
   addResources,
   deleteRes,
+  getLatestResources,
 } from "../controllers/resourcesControllers.js";
 import upload from "../middleware/multer.js";
 
@@ -18,5 +19,8 @@ resourcesRoutes.post(
 
 // delete resource
 resourcesRoutes.delete("/deleteres/:resid", isLoggedIn, deleteRes);
+
+// latest resources
+resourcesRoutes.get("/latest", getLatestResources);
 
 export default resourcesRoutes;

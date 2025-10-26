@@ -4,6 +4,7 @@ import {
   getAllComments,
   getAllUsers,
   getBlogByStatus,
+  getCounts,
   getResByStatus,
   isAdmin,
   updateBlogStatus,
@@ -30,4 +31,6 @@ adminRouter.patch("/editres/:resid", isLoggedIn, isAdmin, updateResStatus);
 // get all comments
 adminRouter.get("/comments", isLoggedIn, isAdmin, getAllComments);
 
+// get counts
+adminRouter.get("/getcounts", isLoggedIn, isAdmin, getCounts);
 export default adminRouter;

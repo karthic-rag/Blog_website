@@ -7,8 +7,10 @@ const Layout = ({ children }) => {
   const location = useLocation();
 
   const hidePaths = ["/login", "/register"];
+  const shouldHide =
+    hidePaths.includes(location.pathname) ||
+    location.pathname.startsWith("/admin");
 
-  const shouldHide = hidePaths.includes(location.pathname);
   return (
     <div>
       {!shouldHide && <NavBar />}

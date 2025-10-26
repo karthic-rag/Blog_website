@@ -90,19 +90,17 @@ export const deleteRes = async (req, res) => {
 };
 
 // getting latest three resources
-export const getLatestBlog = async (req, res) => {
+export const getLatestResources = async (req, res) => {
   try {
     const resources = await resourcesModel
       .find()
       .sort({ createdAt: -1 })
       .limit(3);
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "resources get successfully",
-        resources,
-      });
+    res.status(200).json({
+      success: true,
+      message: "resources get successfully",
+      resources,
+    });
   } catch (error) {
     res.status(500).json({
       success: false,

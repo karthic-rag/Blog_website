@@ -239,7 +239,10 @@ export const updateProfile = async (req, res) => {
 
 export const getAllblogs = async (req, res) => {
   try {
-    const allBlogs = await BlogModel.find({ status: "approved" });
+    const allBlogs = await BlogModel.find({ status: "approved" }).populate(
+      "author",
+      "username"
+    );
 
     if (allBlogs.length === 0) {
       return res
@@ -260,7 +263,9 @@ export const getAllblogs = async (req, res) => {
 
 export const getAllResources = async (req, res) => {
   try {
-    const allResources = await resourcesModel.find({ status: "approved" });
+    const allResources = await resourcesModel
+      .find({ status: "approved" })
+      .populate("author", "username");
 
     if (allResources.length === 0) {
       return res
@@ -284,7 +289,7 @@ export const getAllResources = async (req, res) => {
 // contact admin
 export const contactUs = async (req, res) => {
   try {
-    const { name, message, email } = req.body;
+    const { name, message, email, subject } = req.body;
 
     if (!name || !message || !email) {
       return res
@@ -296,7 +301,7 @@ export const contactUs = async (req, res) => {
     const mailOptions = {
       from: email,
       to: process.env.SMTP_MAIL,
-      subject: `New Contact Us Message from ${name}`,
+      subject: subject,
       text: `
         You have a new contact form submission:
 

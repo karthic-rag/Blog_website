@@ -34,9 +34,7 @@ const NavBar = () => {
     { name: "Create Blog", path: "/create-blog" },
     { name: "Create Resource", path: "/create-resource" },
     { name: "Profile", path: "/profile" },
-    ...(user?.role === "admin"
-      ? [{ name: "Dashboard", path: "/dashboard" }]
-      : []),
+    ...(user?.role === "admin" ? [{ name: "Dashboard", path: "/admin" }] : []),
     { name: "Logout", path: "/", action: logout },
   ];
 
@@ -66,14 +64,14 @@ const NavBar = () => {
       </div>
 
       {/* Right side: profile/login */}
-      <div className="flex items-center" ref={menuRef}>
+      <div className="flex items-center " ref={menuRef}>
         {user ? (
           <div className="relative">
             <img
               src={user?.profile?.url || "/default-avatar.png"}
               alt="profile"
               width={40}
-              className="rounded-full cursor-pointer"
+              className="w-12 h-12 rounded-full object-cover"
               onClick={() => setDropDown((prev) => !prev)}
             />
             {dropDown && (

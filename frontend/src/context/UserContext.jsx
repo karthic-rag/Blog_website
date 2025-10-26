@@ -34,11 +34,12 @@ export const UserContextProvider = ({ children }) => {
         identifier: trimmedIdentifier,
         password: trimmedPassword,
       });
+
       setUser(res.data.user);
       toast.success(res.data?.message || "Login Successfull");
       navigate("/");
     } catch (error) {
-      toast.error(error.response?.data?.message) || "Login failed";
+      toast.error(error.response?.data?.message || "Login failed");
     }
   };
 
@@ -53,7 +54,53 @@ export const UserContextProvider = ({ children }) => {
     }
   };
 
-  const value = { user, setUser, login, logout, loading };
+  const updateProfile = async (profileData) => {
+    try {
+      const formData = new FormData();
+      if (profileData.username) {
+        formData.append("username", profileData.username);
+      }
+      if (profileData.name) {
+        formData.append("name", profileData.name);
+      }
+      if (profileData.profilePic) {
+        formData.append("image", profileData.profilePic);
+      }
+      const res = await api.patch("/user/updateprofile", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+        withCredentials: true,
+      });
+
+      return toast.success(res.data?.message || "Profiel updated successfully");
+    } catch (error) {
+      console.log(error.message);
+
+      return toast.error("Profiel not updated");
+    }
+  };
+
+  const contactUs = async (form) => {
+    try {
+      const res = await api.post("/user/contact", form, {
+        headers: { "Content-Type": "application/json" },
+        withCredentials: true,
+      });
+      toast.success(res.data?.message || "Message sent successfully");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to send message");
+      console.log(error.response?.data?.message);
+    }
+  };
+
+  const value = {
+    user,
+    setUser,
+    login,
+    logout,
+    loading,
+    contactUs,
+    updateProfile,
+  };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

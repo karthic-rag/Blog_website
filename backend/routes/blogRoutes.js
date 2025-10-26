@@ -4,7 +4,9 @@ import {
   addComment,
   deleteBlog,
   deleteComment,
+  getLatestBlog,
   getSpecComment,
+  getSpecificBlog,
 } from "../controllers/blogControllers.js";
 import upload from "../middleware/multer.js";
 import { isLoggedIn } from "../middleware/auth.js";
@@ -18,12 +20,18 @@ blogRouter.post("/add", upload.single("image"), isLoggedIn, addBlog);
 blogRouter.delete("/deleteblog/:blogid", isLoggedIn, deleteBlog);
 
 //add comment
-blogRouter.post("/addcomment/:blogid", isLoggedIn, addComment);
+blogRouter.post("/addcomment", isLoggedIn, addComment);
 
 // get comment for specific blog
 blogRouter.get("/getcomment/:blogid", getSpecComment);
 
 //delete comment
 blogRouter.delete("/deletecomment/:commentid", isLoggedIn, deleteComment);
+
+//getting latest blogs
+blogRouter.get("/latest", getLatestBlog);
+
+//getting specific blog
+blogRouter.get("/specific/:blogId", getSpecificBlog);
 
 export default blogRouter;

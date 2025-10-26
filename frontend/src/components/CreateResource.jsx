@@ -1,22 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { ResourceContext } from "../context/ResourceContext";
 
-const CATEGORY_OPTIONS = [
-  "Technology",
-  "Lifestyle",
-  "Travel",
-  "Food",
-  "Education",
-  "Health",
-];
+const CATEGORY_OPTIONS = ["Youtube", "Telegram", "Instagram", "Raw"];
 
 const CreateResource = () => {
+  const { addResource } = useContext(ResourceContext);
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
     category: "",
     link: "",
-    image: null,
   });
+  const [image, setFormImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [imageError, setImageError] = useState("");
 
@@ -31,30 +27,40 @@ const CreateResource = () => {
       const validTypes = ["image/jpeg", "image/png"];
       if (!validTypes.includes(file.type)) {
         setImageError("Only JPEG and PNG images are allowed.");
-        setForm({ ...form, image: null });
+        setFormImage(null);
         setImagePreview(null);
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
         setImageError("Image must be less than 2MB.");
-        setForm({ ...form, image: null });
+        setFormImage(null);
         setImagePreview(null);
         return;
       }
       setImageError("");
-      setForm({ ...form, image: file });
+      setFormImage(file);
       setImagePreview(URL.createObjectURL(file));
     } else {
       setImageError("");
-      setForm({ ...form, image: null });
+      setFormImage(null);
       setImagePreview(null);
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., send to backend)
-    console.log(form);
+    setLoading(true);
+    await addResource(form, image);
+    setLoading(false);
+    setForm({
+      title: "",
+      description: "",
+      category: "",
+      link: "",
+    });
+    setFormImage(null);
+    setImagePreview(null);
+    setImageError("");
   };
 
   return (
@@ -144,8 +150,9 @@ const CreateResource = () => {
       <button
         type="submit"
         className="w-full bg-blue-700 text-white font-bold py-2 px-4 rounded hover:bg-blue-800 transition"
+        disabled={loading}
       >
-        Create Resource
+        {loading ? "Submitting..." : "Create Blog"}
       </button>
     </form>
   );
