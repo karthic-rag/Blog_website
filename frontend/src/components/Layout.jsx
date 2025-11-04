@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import NavBar from "./navBar";
+import NavBar from "./NavBar";
 import Footer from "./Footer";
 
 const Layout = ({ children }) => {

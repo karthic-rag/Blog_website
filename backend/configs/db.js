@@ -7,6 +7,6 @@ export const connectDB = async () => {
     );
     await mongoose.connect(`${process.env.DB_URI}/Blog_Web`);
   } catch (error) {
-    console.log(error.message);
+    console.log(error);
   }
 };
