@@ -2,6 +2,8 @@ import express from "express";
 import {
   contactUs,
   getProfile,
+  getUserBlogs,
+  getUserResources,
   loginUser,
   logOutUser,
   registerUser,
@@ -35,6 +37,12 @@ UserRouter.patch(
   isLoggedIn,
   updateProfile
 );
+
+//user blogs
+UserRouter.get("/blogs", isLoggedIn, getUserBlogs);
+
+//user resources
+UserRouter.get("/resources", isLoggedIn, getUserResources);
 
 // getting all blogs
 UserRouter.get("/allblogs", getAllblogs);

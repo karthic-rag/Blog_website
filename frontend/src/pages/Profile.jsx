@@ -1,15 +1,14 @@
 import React, { useContext, useState } from "react";
 import { Pencil } from "lucide-react";
 import { UserContext } from "../context/UserContext";
-import { AdminContext } from "../context/AdminContext";
 
 const ITEMS_PER_PAGE = 4;
 
 const Profile = () => {
   const { user, updateProfile } = useContext(UserContext);
   const [loading, setLoading] = useState(false);
-  const { blogs } = useContext(AdminContext);
-  const { resources } = useContext(AdminContext);
+  const { blogs } = useContext(UserContext);
+  const { resources } = useContext(UserContext);
 
   // Pagination state
   const [blogPage, setBlogPage] = useState(1);

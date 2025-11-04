@@ -8,6 +8,8 @@ export const UserContext = createContext();
 export const UserContextProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useState([]);
+  const [resources, setResources] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,7 +23,29 @@ export const UserContextProvider = ({ children }) => {
         setLoading(false);
       }
     };
+    const userBlogs = async () => {
+      try {
+        const res = await api.get("/user/blogs");
+        setBlogs(res.data.userBlogs);
+      } catch {
+        setBlogs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    const userResources = async () => {
+      try {
+        const res = await api.get("/user/resources");
+        setResources(res.data.userResources);
+      } catch {
+        setResources([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    userBlogs();
+    userResources();
     checkAuth();
   }, []);
 
@@ -100,6 +124,8 @@ export const UserContextProvider = ({ children }) => {
     loading,
     contactUs,
     updateProfile,
+    blogs,
+    resources,
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

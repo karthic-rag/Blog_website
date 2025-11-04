@@ -286,6 +286,52 @@ export const getAllResources = async (req, res) => {
   }
 };
 
+export const getUserResources = async (req, res) => {
+  try {
+    const userResources = await resourcesModel.find();
+
+    if (userResources.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "resources not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "user resources get successfully",
+      userResources,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "error in get user resources" + error.message,
+    });
+  }
+};
+
+export const getUserBlogs = async (req, res) => {
+  try {
+    const userBlogs = await BlogModel.find();
+
+    if (userBlogs.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "blogs not found" });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "user blogs get successfully",
+      userBlogs,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "error in get user blogs" + error.message,
+    });
+  }
+};
+
 // contact admin
 export const contactUs = async (req, res) => {
   try {
