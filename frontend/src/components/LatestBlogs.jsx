@@ -14,8 +14,8 @@ const LatestBlogs = () => {
     <div className="w-full min-h-[400px] mb-10">
       <p className="text-2xl font-bold mb-5">Featured blogs</p>
       <div className="grid gap-5 grid-cols-1 sm:grid-cols-3 ">
-        {blogs.map((blog) => (
-          <NavLink key={blog._id} to={`/blog/${blog._id}`}>
+        {blogs.map((blog, index) => (
+          <NavLink key={index} to={`/blog/${blog._id}`}>
             <div className="bg-white rounded shadow p-4 flex flex-col items-center hover:shadow-2xl">
               <img
                 src={blog.image.url}
