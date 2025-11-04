@@ -9,7 +9,7 @@ import { BlogContextProvider } from "./context/BlogContext";
 import { ResourceContextProvider } from "./context/ResourceContext";
 
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter basename="/">
+  <BrowserRouter>
     <UserContextProvider>
       <BlogContextProvider>
         <ResourceContextProvider>
