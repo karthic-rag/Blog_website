@@ -57,7 +57,9 @@ export const addBlog = async (req, res) => {
 // getting latest three blogs
 export const getLatestBlog = async (req, res) => {
   try {
-    const blogs = await BlogModel.find().sort({ createdAt: -1 }).limit(3);
+    const blogs = await BlogModel.find({ status: "approved" })
+      .sort({ createdAt: -1 })
+      .limit(3);
     res
       .status(200)
       .json({ success: true, message: "blogs get successfully", blogs });

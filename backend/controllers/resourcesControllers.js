@@ -93,7 +93,7 @@ export const deleteRes = async (req, res) => {
 export const getLatestResources = async (req, res) => {
   try {
     const resources = await resourcesModel
-      .find()
+      .find({ status: "approved" })
       .sort({ createdAt: -1 })
       .limit(3);
     res.status(200).json({
