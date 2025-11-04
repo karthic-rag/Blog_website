@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { NavLink } from "react-router-dom";
+import menu from "../assets/menu.png"
 import { UserContext } from "../context/UserContext";
 
 const NavBar = () => {
@@ -44,7 +45,7 @@ const NavBar = () => {
       <div className="flex items-center gap-3 w-[60%] justify-between md:w-auto">
         {/* Mobile menu bar */}
         <img
-          src="../src/assets/menu.png"
+          src={menu}
           alt="menu"
           width={35}
           onClick={() => setIsOpen(!isOpen)}

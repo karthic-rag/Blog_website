@@ -5,11 +5,17 @@ import { UserContext } from "../context/UserContext";
 const Login = () => {
   const [identifier, setIdentifier] = useState();
   const [password, setPassword] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(UserContext);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    login(identifier, password);
+    setIsLoading(true);
+    try {
+      await login(identifier, password);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     <div className="min-h-[95vh] flex items-center justify-center">
@@ -46,9 +52,12 @@ const Login = () => {
         </NavLink>
         <button
           type="submit"
-          className="bg-web-blue rounded-lg py-2 mb-8 text-white hover:bg-blue-800"
+          disabled={isLoading}
+          className={`bg-web-blue rounded-lg py-2 mb-8 text-white ${
+            isLoading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-800"
+          }`}
         >
-          Sign in
+          {isLoading ? "Signing in..." : "Sign in"}
         </button>
         <div className="flex justify-center gap-2">
           <p>Don't have an account ?</p>

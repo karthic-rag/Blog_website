@@ -9,10 +9,12 @@ const Register = () => {
   const [password, setPassword] = useState();
   const [email, setEmail] = useState();
   const [confirm, setConfirm] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     try {
       const res = await api.post("/user/register", {
@@ -26,6 +28,8 @@ const Register = () => {
       navigate("/login");
     } catch (error) {
       toast.error(error.response?.data?.message || "User not created");
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -79,9 +83,12 @@ const Register = () => {
         />
         <button
           type="submit"
-          className="bg-web-blue rounded-lg py-2 mb-8 text-white hover:bg-blue-800"
+          disabled={isLoading}
+          className={`bg-web-blue rounded-lg py-2 mb-8 text-white ${
+            isLoading ? "opacity-70 cursor-not-allowed" : "hover:bg-blue-800"
+          }`}
         >
-          Sign up
+          {isLoading ? "Creating Account..." : "Sign up"}
         </button>
         <div className="flex justify-center gap-2">
           <p>Already have an account ?</p>

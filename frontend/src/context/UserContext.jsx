@@ -88,7 +88,7 @@ export const UserContextProvider = ({ children }) => {
       toast.success(res.data?.message || "Message sent successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to send message");
-      console.log(error.response?.data?.message);
+      console.log(error);
     }
   };
 
