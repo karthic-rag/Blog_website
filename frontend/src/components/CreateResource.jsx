@@ -152,7 +152,7 @@ const CreateResource = () => {
         className="w-full bg-blue-700 text-white font-bold py-2 px-4 rounded hover:bg-blue-800 transition"
         disabled={loading}
       >
-        {loading ? "Submitting..." : "Create Blog"}
+        {loading ? "Submitting..." : "Create Resources"}
       </button>
     </form>
   );
