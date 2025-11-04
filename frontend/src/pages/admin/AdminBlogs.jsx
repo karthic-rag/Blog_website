@@ -1,10 +1,12 @@
 import React, { useContext, useState } from "react";
 import { AdminContext } from "../../context/AdminContext";
+import { BlogContext } from "../../context/BlogContext";
 
 const AdminBlogs = () => {
   const [activeTab, setActiveTab] = useState("pending");
 
   const { blogs } = useContext(AdminContext);
+  const{updateBlogStatus}=useContext(BlogContext);
   const filteredBlogs = blogs.filter((b) => b.status === activeTab);
 
   return (
@@ -59,13 +61,28 @@ const AdminBlogs = () => {
                   <td className="px-6 py-3">
                     {blog.status === "pending" && (
                       <>
-                        <button className="text-green-600 hover:underline mr-3">
+                        <button className="text-green-600 hover:underline mr-3" onClick={() => updateBlogStatus(blog._id, "approved")}>
                           Approve
                         </button>
-                        <button className="text-red-600 hover:underline">
+                        <button className="text-red-600 hover:underline" onClick={() => updateBlogStatus(blog._id, "rejected")}>
                           Reject
                         </button>
                       </>
+                    )}
+                    {blog.status === "approved" && (
+                      
+                        <button className="text-red-600 hover:underline" onClick={() => updateBlogStatus(blog._id, "rejected")}>
+                          Reject
+                        </button>
+                      
+                    )}
+                    {blog.status === "rejected" && (
+                      
+                        <button className="text-green-600 hover:underline mr-3" onClick={() => updateBlogStatus(blog._id, "approved")}>
+                          Approve
+                        </button>
+                        
+                    
                     )}
                   </td>
                 </tr>

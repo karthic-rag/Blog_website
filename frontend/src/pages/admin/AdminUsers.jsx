@@ -13,22 +13,18 @@ const AdminUsers = () => {
         <table className="min-w-full text-sm text-left">
           <thead className="bg-gray-100 border-b">
             <tr>
+              <th className="px-6 py-3 font-semibold">Name</th>
               <th className="px-6 py-3 font-semibold">Username</th>
               <th className="px-6 py-3 font-semibold">Email</th>
-              <th className="px-6 py-3 font-semibold">Action</th>
             </tr>
           </thead>
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
                 <tr key={user.id} className="border-b hover:bg-gray-50">
+                  <td className="px-6 py-3">{user.name}</td>
                   <td className="px-6 py-3">{user.username}</td>
                   <td className="px-6 py-3 capitalize">{user.email}</td>
-                  <td className="px-6 py-3">
-                    <button className="text-red-600 hover:underline">
-                      Delete
-                    </button>
-                  </td>
                 </tr>
               ))
             ) : (

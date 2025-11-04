@@ -31,6 +31,7 @@ export const BlogContextProvider = ({ children }) => {
     getAppBlogs();
     getLatestBlogs();
   }, []);
+
   const addBlog = async (blog, image) => {
     try {
       const formData = new FormData();
@@ -57,7 +58,16 @@ export const BlogContextProvider = ({ children }) => {
       return null;
     }
   };
-
+ 
+  const updateBlogStatus = async (blogId, status) => {
+    try {
+      const res = await api.patch(`/admin/editblog/${blogId}`,{ status: status });
+      return toast.success(res.data?.message || "Blog updated successfully");
+    } catch (error) {
+      console.log(error);
+      return toast.error(error.response?.data?.message || "Blog updating failed");
+    }
+  };
   const addComment = async (content, blogId) => {
     try {
       const res = await api.post(`/blog/addcomment`, { content, blogId });
@@ -81,6 +91,7 @@ export const BlogContextProvider = ({ children }) => {
     }
   };
 
+
   const values = {
     addBlog,
     blogs,
@@ -88,6 +99,7 @@ export const BlogContextProvider = ({ children }) => {
     getSpecComments,
     getSpecificBlog,
     addComment,
+    updateBlogStatus,
   };
   return <BlogContext.Provider value={values}>{children}</BlogContext.Provider>;
 };

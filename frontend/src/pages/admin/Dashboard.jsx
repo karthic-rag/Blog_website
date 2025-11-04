@@ -1,12 +1,21 @@
 import React, { useContext } from "react";
 import { Users, FileText, FolderClosed } from "lucide-react";
 import { AdminContext } from "../../context/AdminContext";
-import { NavLink } from "react-router-dom";
 import RecentTable from "../../components/admin/RecentTable";
+import { BlogContext } from "../../context/BlogContext";
+import { ResourceContext } from "../../context/ResourceContext";
 
 const Dashboard = () => {
-  const { count, users } = useContext(AdminContext);
+  const { count, users, resources, blogs } = useContext(AdminContext);
+  const {updateBlogStatus} = useContext(BlogContext);
+  const {updateResourceStatus} = useContext(ResourceContext);
   const recentUsers = users
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 3);
+  const recentBlogs = blogs
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 3);
+  const recentResources = resources
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 3);
 
@@ -72,17 +81,17 @@ const Dashboard = () => {
           page: { path: "/admin/blogs", name: "Manage all blogs" },
         }}
       >
-        {recentUsers.map((user, index) => {
+        {recentBlogs.map((blog, index) => {
           return (
             <tr key={index} className="border-b-2 border-gray-300 font-light">
-              <td>{user.username}</td>
-              <td>{user.email}</td>
+              <td>{blog.title}</td>
+              <td>{blog.category}</td>
               <td>
                 <div className="flex flex-col gap-2 my-2 items-center">
-                  <button className="bg-green-500 px-2 py-3 rounded-xl  text-white hover:bg-green-700 ">
+                  <button className="bg-green-500 px-2 py-3 rounded-xl  text-white hover:bg-green-700 " onClick={() => updateBlogStatus(blog._id, "approved")}>
                     Aprove
                   </button>
-                  <button className="bg-red-500 px-2 py-3 rounded-xl  text-white hover:bg-red-600 ">
+                  <button className="bg-red-500 px-2 py-3 rounded-xl  text-white hover:bg-red-600 " onClick={() => updateBlogStatus(blog._id, "rejected")}>
                     Reject
                   </button>
                 </div>
@@ -103,17 +112,17 @@ const Dashboard = () => {
           page: { path: "/admin/resources", name: "Manage all resources" },
         }}
       >
-        {recentUsers.map((user, index) => {
+        {recentResources.map((resource, index) => {
           return (
             <tr key={index} className="border-b-2 border-gray-300 font-light">
-              <td>{user.username}</td>
-              <td>{user.email}</td>
+              <td>{resource.title}</td>
+              <td>{resource.category}</td>
               <td>
                 <div className="flex flex-col gap-2 my-2 items-center">
-                  <button className="bg-green-500 px-2 py-3 rounded-xl  text-white hover:bg-green-600 ">
+                  <button className="bg-green-500 px-2 py-3 rounded-xl  text-white hover:bg-green-600 " onClick={() => updateResourceStatus(resource._id, "approved")}>
                     Aprove
                   </button>
-                  <button className="bg-red-500 px-2 py-3 rounded-xl  text-white hover:bg-red-600 ">
+                  <button className="bg-red-500 px-2 py-3 rounded-xl  text-white hover:bg-red-600 " onClick={() => updateResourceStatus(resource._id, "rejected")}>
                     Reject
                   </button>
                 </div>

@@ -1,10 +1,12 @@
 import React, { useContext, useState } from "react";
 import { AdminContext } from "../../context/AdminContext";
+import { ResourceContext } from "../../context/ResourceContext";
 
 const AdminRes = () => {
   const [activeTab, setActiveTab] = useState("pending");
 
   const { resources } = useContext(AdminContext);
+  const {updateResourceStatus}=useContext(ResourceContext);
   const filteredres = resources.filter((b) => b.status === activeTab);
 
   return (
@@ -40,40 +42,55 @@ const AdminRes = () => {
           </thead>
           <tbody>
             {filteredres.length > 0 ? (
-              filteredres.map((blog) => (
-                <tr key={blog.id} className="border-b hover:bg-gray-50">
-                  <td className="px-6 py-3">{blog.title}</td>
+              filteredres.map((res) => (
+                <tr key={res.id} className="border-b hover:bg-gray-50">
+                  <td className="px-6 py-3">{res.title}</td>
                   <td className="px-6 py-3 capitalize">
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                        blog.status === "approved"
+                        res.status === "approved"
                           ? "bg-green-100 text-green-700"
-                          : blog.status === "pending"
+                          : res.status === "pending"
                           ? "bg-yellow-100 text-yellow-700"
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {blog.status}
+                      {res.status}
                     </span>
                   </td>
                   <td className="px-6 py-3">
-                    {blog.status === "pending" && (
+                    {res.status === "pending" && (
                       <>
-                        <button className="text-green-600 hover:underline mr-3">
+                        <button className="text-green-600 hover:underline mr-3" onClick={() => updateResourceStatus(res._id, "approved")}>
                           Approve
                         </button>
-                        <button className="text-red-600 hover:underline">
+                        <button className="text-red-600 hover:underline" onClick={() => updateResourceStatus(res._id, "rejected")}>
                           Reject
                         </button>
                       </>
+                    )}
+                    {res.status === "approved" && (
+                  
+                        <button className="text-red-600 hover:underline" onClick={() => updateResourceStatus(res._id, "rejected")}>
+                          Reject
+                        </button>
+                        
+                    )}
+                    {res.status === "rjected" && (
+                      
+                        <button className="text-green-600 hover:underline mr-3" onClick={() => updateResourceStatus(res._id, "approved")}>
+                          Approve
+                        </button>
+                       
+                      
                     )}
                   </td>
                 </tr>
               ))
             ) : (
-              <tr>
+              <tr >
                 <td className="px-6 py-3 text-gray-500" colSpan="3">
-                  No {activeTab} blogs found.
+                  No {activeTab} resources found.
                 </td>
               </tr>
             )}

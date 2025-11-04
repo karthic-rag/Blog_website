@@ -51,8 +51,17 @@ export const ResourceContextProvider = ({ children }) => {
       );
     }
   };
+  const updateResourceStatus = async (resourceId, status) => {
+      try {
+        const res = await api.patch(`/admin/editres/${resourceId}`,{ status: status });
+        return toast.success(res.data?.message || "Resource updated successfully");
+      } catch (error) {
+        console.log(error);
+        return toast.error(error.response?.data?.message || "Resource updating failed");
+      }
+    };
 
-  const values = { addResource, resources, appResources };
+  const values = { addResource, resources, appResources, updateResourceStatus };
   return (
     <ResourceContext.Provider value={values}>
       {children}

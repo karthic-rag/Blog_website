@@ -9,6 +9,7 @@ export const AdminContextProvider = ({ children }) => {
   const [users, setUsers] = useState([]);
   const [blogs, setBlogs] = useState([]);
   const [resources, setResources] = useState([]);
+  const [comments, setComments] = useState([]);
 
   useEffect(() => {
     const getCounts = async () => {
@@ -44,12 +45,33 @@ export const AdminContextProvider = ({ children }) => {
         console.log("Error in getting resources. " + error.message);
       }
     };
+    const AllComments = async () => {
+      try {
+        const res = await api.get("/admin/comments");
+        setComments(res.data?.allComments);
+      } catch (error) {
+        console.log("Error in getting comments. " + error.message);
+      }
+    };
+    
     AllBlogs();
     AllResources();
     getCounts();
     AllUsers();
+    AllComments();
   }, []);
-  const values = { count, users, blogs, resources };
+
+  const deleteComment = async (commentid) => {
+      try {
+      const res = await api.delete(`/blog/deletecomment/${commentid}`);
+      return toast.success(res.data?.message || "comment deleted successfully");
+    } catch (error) {
+      return toast.error(
+        error.response?.data?.message || "comment deleting failed"
+      );
+    }
+    };
+  const values = { count, users, blogs, resources, comments, deleteComment };
   return (
     <AdminContext.Provider value={values}>{children}</AdminContext.Provider>
   );
