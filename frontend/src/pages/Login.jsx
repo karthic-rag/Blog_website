@@ -40,7 +40,7 @@ const Login = () => {
           Password
         </label>
         <input
-          type="text"
+          type="password"
           className="outline-none border-2 border-gray-200 rounded-lg p-2 mb-2"
           onChange={(e) => setPassword(e.target.value)}
           required
