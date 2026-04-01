@@ -67,7 +67,7 @@ const Register = () => {
           Password
         </label>
         <input
-          type="text"
+          type="password"
           className="outline-none border-2 border-gray-200 rounded-lg p-2 mb-8"
           onChange={(e) => setPassword(e.target.value)}
           required
@@ -76,7 +76,7 @@ const Register = () => {
           Confirm Password
         </label>
         <input
-          type="text"
+          type="password"
           className="outline-none border-2 border-gray-200 rounded-lg p-2 mb-5"
           onChange={(e) => setConfirm(e.target.value)}
           required
